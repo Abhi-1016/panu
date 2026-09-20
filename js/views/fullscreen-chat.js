@@ -349,16 +349,6 @@ export function renderFullscreenChat(container) {
         </div>
       </header>
 
-      <!-- Mobile View Segmented Tab Switcher -->
-      <div class="mobile-segmented-strip ${deviceMode === 'mobile' ? 'is-force-mobile' : ''}">
-        <button class="btn-m-segment ${mobileActiveTab === 'chat' ? 'active' : ''}" id="btn-m-segment-chat">
-          💬 Myra Planning & Interventions (${messages.length})
-        </button>
-        <button class="btn-m-segment ${mobileActiveTab === 'preview' ? 'active' : ''}" id="btn-m-segment-preview">
-          🧭 Visual Review Canvas (${previewMode.toUpperCase()})
-        </button>
-      </div>
-
       <!-- SPLIT SCREEN LAYOUT: Fixed 50-50 Split (Left: Chat Interventions | Right: Visual Review Canvas) -->
       <div class="split-workspace-body" id="split-workspace-body">
         
@@ -965,7 +955,7 @@ export function renderFullscreenChat(container) {
                     ${transitModes.map(tm => `
                       <div style="background: #f8fafc; border: 1.5px solid ${selectedTransitMode === tm.id ? '#0284c7' : '#e2e8f0'}; border-radius: 8px; padding: 8px; cursor: pointer;" class="btn-transit-mode-card" data-mode-id="${tm.id}">
                         <div style="font-size: 16px; margin-bottom: 2px;">${tm.icon}</div>
-                        <div style="font-weight: 700; font-size: 11.5px; color: #0a223d;">${tm.name}</div>
+                        <div style="font-weight: 700; font-size: 11.5px; color: #0a223d;">${tm.title || tm.name || 'Transit'}</div>
                         <div style="font-size: 10.5px; color: #64748b;">${tm.duration}</div>
                         <div style="font-weight: 800; font-size: 12px; color: #059669; margin-top: 2px;">₹${tm.costPerPerson.toLocaleString()}<span style="font-size: 9.5px; font-weight: 400; color: #64748b;">/head</span></div>
                       </div>
@@ -2279,6 +2269,34 @@ export function renderFullscreenChat(container) {
         </section>
 
       </div>
+
+      <!-- Mobile Bottom Navigation Bar (Fixed at the bottom of the screen) -->
+      <nav class="mobile-bottom-nav-bar ${deviceMode === 'mobile' ? 'is-force-mobile' : ''}" id="mobile-bottom-nav" aria-label="Mobile Navigation">
+        <button class="btn-m-bottom-tab btn-m-segment ${mobileActiveTab === 'chat' ? 'active' : ''}" id="btn-m-segment-chat" title="Myra Planning & Interventions">
+          <div class="m-tab-icon-wrap">
+            <span class="m-tab-icon">💬</span>
+            <span class="m-tab-active-dot"></span>
+          </div>
+          <div class="m-tab-text-group">
+            <span class="m-tab-title">Planning & Chat</span>
+            <span class="m-tab-sub">Myra Interventions</span>
+          </div>
+          <span class="m-tab-badge">${messages.length}</span>
+        </button>
+
+        <button class="btn-m-bottom-tab btn-m-segment ${mobileActiveTab === 'preview' ? 'active' : ''}" id="btn-m-segment-preview" title="Visual Review Canvas">
+          <div class="m-tab-icon-wrap">
+            <span class="m-tab-icon">🧭</span>
+            <span class="m-tab-active-dot"></span>
+          </div>
+          <div class="m-tab-text-group">
+            <span class="m-tab-title">Review Canvas</span>
+            <span class="m-tab-sub">${previewMode === 'master_itinerary' ? (hasCuisinesSelected ? 'Synchronized Master' : 'Places & Activities') : previewMode === 'trip_locker' ? 'Central Locker' : 'Disruption Radar'}</span>
+          </div>
+          <span class="m-tab-badge m-tab-badge-accent">${previewMode === 'master_itinerary' ? (hasCuisinesSelected ? 'MASTER' : 'PREVIEW') : previewMode === 'trip_locker' ? 'LOCKER' : 'RADAR'}</span>
+        </button>
+      </nav>
+
     </div>
   `;
 
@@ -2287,6 +2305,15 @@ export function renderFullscreenChat(container) {
   if (chatStream) {
     chatStream.scrollTop = chatStream.scrollHeight;
   }
+
+  // Mobile Bottom Navigation Bar: Switch between Planning & Chat and Visual Review Canvas
+  container.querySelector('#btn-m-segment-chat')?.addEventListener('click', () => {
+    mmtState.setMobileActiveTab('chat');
+  });
+
+  container.querySelector('#btn-m-segment-preview')?.addEventListener('click', () => {
+    mmtState.setMobileActiveTab('preview');
+  });
 
   // Visual Review Mode Tabs (Right Column Review Canvas)
   container.querySelector('#tab-preview-intel')?.addEventListener('click', () => {

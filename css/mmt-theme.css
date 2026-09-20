@@ -1175,44 +1175,162 @@ body {
   display: none !important;
 }
 
-/* Mobile Segmented Strip (Requirement 2) */
-.mobile-segmented-strip {
-  display: none;
-  background: #0a223d;
-  padding: 8px 12px;
-  gap: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  z-index: 20;
+/* ==========================================================================
+   MOBILE BOTTOM NAVIGATION BAR (Planning & Visual Review Canvas)
+   ========================================================================== */
+.mobile-bottom-nav-bar {
+  display: none; /* hidden on desktop (>900px) where 50-50 split is shown side-by-side */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: rgba(10, 34, 61, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.35);
+  z-index: 1000;
+  padding: 6px 14px max(6px, env(safe-area-inset-bottom)) 14px;
+  align-items: center;
+  justify-content: space-around;
+  gap: 10px;
 }
 
-.btn-m-segment {
+/* When in Mobile App Device Preview Wrapper */
+.is-mobile-app .mobile-bottom-nav-bar {
+  position: absolute;
+  border-bottom-left-radius: 32px;
+  border-bottom-right-radius: 32px;
+}
+
+.btn-m-bottom-tab {
   flex: 1;
-  padding: 8px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 250px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   background: rgba(255, 255, 255, 0.08);
-  color: #cbd5e1;
-  font-size: 12px;
-  font-weight: 700;
-  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  color: #94a3b8;
   cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: center;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0 10px;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.btn-m-segment:hover {
-  background: rgba(255, 255, 255, 0.16);
+.btn-m-bottom-tab:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #e2e8f0;
+}
+
+.btn-m-bottom-tab:active {
+  transform: scale(0.97);
+}
+
+.btn-m-bottom-tab.active {
+  background: linear-gradient(135deg, #0084ff 0%, #005ce6 100%);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 132, 255, 0.45);
+}
+
+.btn-m-bottom-tab .m-tab-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-m-bottom-tab .m-tab-icon {
+  font-size: 19px;
+  line-height: 1;
+}
+
+.btn-m-bottom-tab .m-tab-active-dot {
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  width: 6px;
+  height: 6px;
+  background: #22c55e;
+  border-radius: 50%;
+  display: none;
+}
+
+.btn-m-bottom-tab.active .m-tab-active-dot {
+  display: block;
+}
+
+.btn-m-bottom-tab .m-tab-text-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.btn-m-bottom-tab .m-tab-title {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+}
+
+.btn-m-bottom-tab .m-tab-sub {
+  font-size: 9.5px;
+  color: #cbd5e1;
+  font-weight: 500;
+  white-space: nowrap;
+  max-width: 105px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-m-bottom-tab:not(.active) .m-tab-sub {
+  color: #64748b;
+}
+
+.btn-m-bottom-tab .m-tab-badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.btn-m-bottom-tab.active .m-tab-badge {
+  background: rgba(255, 255, 255, 0.25);
   color: #ffffff;
 }
 
-.btn-m-segment.active {
-  background: #0084ff;
+.btn-m-bottom-tab .m-tab-badge-accent {
+  background: rgba(56, 189, 248, 0.2);
+  color: #7dd3fc;
+}
+
+.btn-m-bottom-tab.active .m-tab-badge-accent {
+  background: rgba(255, 255, 255, 0.25);
   color: #ffffff;
-  border-color: #0084ff;
-  box-shadow: 0 2px 6px rgba(0, 132, 255, 0.4);
+}
+
+/* Backward compatibility */
+.btn-m-segment {
+  /* Inherits from .btn-m-bottom-tab */
 }
 
 @media (max-width: 900px) {
-  .mobile-segmented-strip {
+  .mobile-bottom-nav-bar {
     display: flex;
   }
   .split-drag-divider {
@@ -1220,40 +1338,54 @@ body {
   }
   .split-workspace-body {
     flex-direction: column;
+    height: calc(100vh - 58px - 64px) !important;
+    height: calc(100dvh - 58px - 64px) !important;
+    overflow: hidden;
   }
   .split-chat-column,
   .split-preview-column {
     width: 100% !important;
+    max-width: 100% !important;
     flex: 1 !important;
+  }
+  .split-preview-column {
+    padding-bottom: 84px !important;
+  }
+  .chat-stream-scroll {
+    padding-bottom: 24px !important;
   }
   .mobile-pane-hidden {
     display: none !important;
   }
 }
 
-.is-force-mobile.mobile-segmented-strip {
+.is-force-mobile.mobile-bottom-nav-bar,
+.is-mobile-app .mobile-bottom-nav-bar {
   display: flex !important;
 }
 
-.device-mobile .mobile-segmented-strip {
-  display: flex !important;
-}
-
-.device-mobile .split-drag-divider {
+.is-mobile-app .split-drag-divider {
   display: none !important;
 }
 
-.device-mobile .split-workspace-body {
+.is-mobile-app .split-workspace-body {
   flex-direction: column !important;
+  height: calc(100% - 58px - 64px) !important;
+  overflow: hidden;
 }
 
-.device-mobile .split-chat-column,
-.device-mobile .split-preview-column {
+.is-mobile-app .split-chat-column,
+.is-mobile-app .split-preview-column {
   width: 100% !important;
+  max-width: 100% !important;
   flex: 1 !important;
 }
 
-.device-mobile .mobile-pane-hidden {
+.is-mobile-app .split-preview-column {
+  padding-bottom: 84px !important;
+}
+
+.is-mobile-app .mobile-pane-hidden {
   display: none !important;
 }
 
@@ -5026,6 +5158,329 @@ body {
     box-shadow: none !important;
     border: 1px solid #cbd5e1 !important;
     margin-bottom: 20px !important;
+  }
+}
+
+/* ==========================================================================
+   COMPREHENSIVE MOBILE RESPONSIVE SUITE (Screen width <= 768px & Touch Devices)
+   ========================================================================== */
+
+/* 1. Global Header & Services Bar */
+@media (max-width: 768px) {
+  .mmt-header-container {
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .mmt-logo-text {
+    font-size: 19px;
+  }
+
+  .mmt-myra-badge {
+    font-size: 9px;
+    padding: 2px 5px;
+  }
+
+  .mmt-header-utilities {
+    gap: 6px;
+  }
+
+  .btn-spec-guide {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .device-toggle-btn {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  #device-mode-text {
+    display: none;
+  }
+
+  .mmt-user-profile-pill {
+    padding: 2px 6px;
+  }
+
+  .persona-role-dropdown {
+    font-size: 11px;
+    max-width: 90px;
+  }
+
+  /* Services Bar smooth touch scrolling */
+  .mmt-services-bar {
+    padding: 4px 0;
+  }
+
+  .mmt-services-container {
+    padding: 4px 12px;
+    gap: 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .mmt-services-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mmt-service-item {
+    flex-shrink: 0;
+    font-size: 12px;
+  }
+}
+
+/* 2. Home View Search Widget & Cards */
+@media (max-width: 768px) {
+  .mmt-hero-banner {
+    padding: 24px 14px 40px;
+  }
+
+  .mmt-hero-title {
+    font-size: 24px;
+    line-height: 1.25;
+  }
+
+  .mmt-hero-subtitle {
+    font-size: 13px;
+  }
+
+  .mmt-search-card {
+    margin: -24px 12px 24px;
+    padding: 16px 14px;
+    border-radius: 14px;
+  }
+
+  .search-inputs-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .search-input-cell {
+    border-right: none !important;
+    border-bottom: 1px solid var(--mmt-border);
+    padding: 12px 10px;
+  }
+
+  .search-input-cell:last-child {
+    border-bottom: none;
+  }
+
+  .btn-search-flights,
+  .btn-plan-trip-cta {
+    width: 100% !important;
+    justify-content: center;
+    padding: 14px 20px;
+    font-size: 15px;
+    margin-top: 12px;
+  }
+
+  .feature-cards-grid,
+  .destinations-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px;
+    padding: 0 12px;
+  }
+}
+
+/* 3. Split-Screen Workspace Header & Pills */
+@media (max-width: 768px) {
+  .split-workspace-header {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .header-brand-block {
+    gap: 8px;
+  }
+
+  .myra-sparkle-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .workspace-title {
+    font-size: 13.5px;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ai-status-tag {
+    display: none;
+  }
+
+  .workspace-sub-meta {
+    font-size: 10px;
+  }
+
+  .header-controls-block {
+    gap: 6px;
+  }
+
+  .btn-workspace-pill {
+    font-size: 10.5px;
+    padding: 4px 8px;
+  }
+
+  .btn-exit-workspace {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  /* Stage Nav Pills horizontal scroll strip */
+  .workspace-stage-nav {
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px 10px;
+    gap: 6px;
+    margin: 0 -12px;
+    background: rgba(4, 21, 51, 0.4);
+  }
+
+  .workspace-stage-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .myra-stage-pill {
+    flex-shrink: 0;
+    font-size: 11px;
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+}
+
+/* 4. Chat Pane & Interactive Stage Cards on Mobile */
+@media (max-width: 768px) {
+  .chat-column-header {
+    padding: 8px 12px;
+  }
+
+  .chat-stream-scroll {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .chat-bubble {
+    max-width: 90% !important;
+    font-size: 12.5px;
+    padding: 10px 12px;
+  }
+
+  .chat-bottom-input-bar {
+    padding: 8px 10px;
+  }
+
+  #split-chat-input {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  /* Interactive Month Calendar Grid Responsive on Mobile */
+  .calendar-month-dropdown {
+    padding: 10px 8px !important;
+  }
+
+  .calendar-date-cell {
+    min-height: 52px !important;
+    padding: 4px 2px !important;
+  }
+
+  .calendar-date-num {
+    font-size: 12px !important;
+  }
+
+  .calendar-date-sub {
+    font-size: 8px !important;
+  }
+
+  .calendar-surge-tag {
+    font-size: 7.5px !important;
+    padding: 1px 2px !important;
+  }
+
+  .cal-mini-avatar {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  /* Grid Columns in Stage Cards Stacking to 1 Col */
+  .stage-grid-card,
+  .multimodal-transit-grid,
+  .hotels-location-grid,
+  .grantex-members-grid,
+  .cab-fleet-grid,
+  .activity-passes-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* 5. Visual Review Canvas & Locker on Mobile */
+@media (max-width: 768px) {
+  .split-preview-column {
+    padding-bottom: 88px !important;
+  }
+
+  .master-itinerary-container,
+  .places-activities-preview-container,
+  .trip-locker-container {
+    padding: 14px 12px !important;
+  }
+
+  .preview-visual-day-card {
+    border-radius: 10px !important;
+  }
+
+  .preview-visual-day-card .day-photo-header {
+    height: 140px !important;
+  }
+
+  .master-day-card {
+    border-radius: 10px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .master-day-card .day-card-header {
+    padding: 10px 12px !important;
+  }
+
+  /* 1-Click PDF Download Button Full Width on Mobile */
+  #btn-download-itinerary-pdf,
+  #btn-download-itinerary-pdf-locker {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 10px 14px !important;
+    font-size: 13px !important;
+  }
+
+  /* Boarding Passes & Vouchers Responsive */
+  .boarding-pass-card,
+  .hotel-voucher-card {
+    border-radius: 8px !important;
+  }
+
+  /* Grantex Escrow Settlement Ledger Horizontal Scroll Container */
+  .grantex-ledger-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+  }
+}
+
+/* 6. Modals on Mobile */
+@media (max-width: 768px) {
+  .spec-modal-container,
+  .disruption-modal-container {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    max-height: 90vh !important;
+    padding: 16px 14px !important;
+    border-radius: 14px !important;
   }
 }
 
