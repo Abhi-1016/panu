@@ -31,6 +31,17 @@
   --mmt-shadow-md: 0 3px 20px 0 rgba(0, 0, 0, 0.12);
   --mmt-shadow-lg: 0 8px 30px 0 rgba(0, 0, 0, 0.16);
 
+  /* Mobile-First Touch Ergonomic Tokens (WCAG 2.1) */
+  --touch-target-min: 44px;
+  --touch-target-large: 48px;
+  --touch-radius-sm: 8px;
+  --touch-radius-md: 12px;
+  --touch-radius-lg: 16px;
+  --touch-spacing-sm: 8px;
+  --touch-spacing-md: 12px;
+  --touch-spacing-lg: 16px;
+  --touch-safe-bottom: max(10px, env(safe-area-inset-bottom));
+
   /* Typography */
   --font-mmt: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -309,33 +320,44 @@ body {
   z-index: 10;
 }
 
-/* Search Inputs Grid */
+/* Search Inputs Grid (Mobile-First 1-column base, 4-column on min-width: 860px) */
 .search-inputs-grid {
   display: grid;
+  grid-template-columns: 1fr;
   border: 1px solid var(--mmt-border);
-  border-radius: 8px;
-  overflow: visible;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-@media (max-width: 860px) {
+@media (min-width: 860px) {
   .search-inputs-grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    border-radius: 8px;
+    overflow: visible;
   }
 }
 
 .search-input-cell {
   padding: 14px 18px;
-  border-right: 1px solid var(--mmt-border);
+  border-bottom: 1px solid var(--mmt-border);
+  border-right: none;
   background: #ffffff;
   display: flex;
   flex-direction: column;
   justify-content: center;
   cursor: pointer;
+  min-height: 52px;
   transition: background 0.2s;
 }
 
-.search-input-cell:last-child {
-  border-right: none;
+@media (min-width: 860px) {
+  .search-input-cell {
+    border-bottom: none;
+    border-right: 1px solid var(--mmt-border);
+  }
+  .search-input-cell:last-child {
+    border-right: none;
+  }
 }
 
 .search-input-cell:hover {
@@ -1156,30 +1178,62 @@ body {
   background: rgba(255, 255, 255, 0.22);
 }
 
-/* Split Body Grid */
+/* ==========================================================================
+   MOBILE-FIRST SPLIT WORKSPACE ARCHITECTURE
+   Base styles = Mobile / Handheld Viewports (Single column + Bottom Nav)
+   @media (min-width: 901px) = Desktop Progressive Enhancement (50-50 Split)
+   ========================================================================== */
+
+/* Split Workspace Body (Mobile-First: 1 Column Vertical Layout) */
 .split-workspace-body {
   flex: 1;
   display: flex;
-  flex-direction: row;
-  height: calc(100vh - 58px);
+  flex-direction: column;
+  height: calc(100vh - 58px - 64px);
+  height: calc(100dvh - 58px - 64px);
   overflow: hidden;
   position: relative;
 }
 
-/* Draggable Divider (Removed - Fixed 50-50 Split) */
-.split-drag-divider {
+/* Draggable Divider (Hidden in fixed/mobile mode) */
+.split-drag-divider,
+.drag-grip-handle {
   display: none !important;
 }
 
-.drag-grip-handle {
+/* Mobile-First Workspace Columns: Full Width by Default */
+.split-chat-column,
+.split-preview-column {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 1 1 100% !important;
+  box-sizing: border-box;
+}
+
+.split-chat-column {
+  background: #f4f6fb;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.split-preview-column {
+  background: #ffffff;
+  overflow-y: auto;
+  padding-bottom: 88px !important; /* clearance above bottom nav bar */
+}
+
+.mobile-pane-hidden {
   display: none !important;
 }
 
 /* ==========================================================================
    MOBILE BOTTOM NAVIGATION BAR (Planning & Visual Review Canvas)
+   Mobile-First: Active & Visible by Default
    ========================================================================== */
 .mobile-bottom-nav-bar {
-  display: none; /* hidden on desktop (>900px) where 50-50 split is shown side-by-side */
+  display: flex; /* Mobile-first: visible on mobile screens */
   position: fixed;
   bottom: 0;
   left: 0;
@@ -1195,13 +1249,6 @@ body {
   align-items: center;
   justify-content: space-around;
   gap: 10px;
-}
-
-/* When in Mobile App Device Preview Wrapper */
-.is-mobile-app .mobile-bottom-nav-bar {
-  position: absolute;
-  border-bottom-left-radius: 32px;
-  border-bottom-right-radius: 32px;
 }
 
 .btn-m-bottom-tab {
@@ -1222,6 +1269,7 @@ body {
   position: relative;
   overflow: hidden;
   user-select: none;
+  touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -1329,39 +1377,51 @@ body {
   /* Inherits from .btn-m-bottom-tab */
 }
 
-@media (max-width: 900px) {
-  .mobile-bottom-nav-bar {
-    display: flex;
-  }
-  .split-drag-divider {
+/* ==========================================================================
+   PROGRESSIVE ENHANCEMENT: DESKTOP WORKSPACE (min-width: 901px)
+   ========================================================================== */
+@media (min-width: 901px) {
+  /* Hide mobile bottom navigation bar on desktop unless forced */
+  .device-viewport-wrapper:not(.is-mobile-app) .mobile-bottom-nav-bar:not(.is-force-mobile) {
     display: none !important;
   }
-  .split-workspace-body {
-    flex-direction: column;
-    height: calc(100vh - 58px - 64px) !important;
-    height: calc(100dvh - 58px - 64px) !important;
-    overflow: hidden;
+
+  /* Expand split workspace to side-by-side row layout */
+  .device-viewport-wrapper:not(.is-mobile-app) .split-workspace-body {
+    flex-direction: row !important;
+    height: calc(100vh - 58px) !important;
+    height: calc(100dvh - 58px) !important;
   }
-  .split-chat-column,
-  .split-preview-column {
-    width: 100% !important;
-    max-width: 100% !important;
-    flex: 1 !important;
+
+  /* Both 50% columns visible simultaneously on desktop */
+  .device-viewport-wrapper:not(.is-mobile-app) .split-chat-column {
+    width: 50% !important;
+    max-width: 50% !important;
+    flex: 0 0 50% !important;
+    display: flex !important;
+    border-right: 1.5px solid #e2e8f0 !important;
   }
-  .split-preview-column {
-    padding-bottom: 84px !important;
-  }
-  .chat-stream-scroll {
+
+  .device-viewport-wrapper:not(.is-mobile-app) .split-preview-column {
+    width: 50% !important;
+    max-width: 50% !important;
+    flex: 0 0 50% !important;
+    display: block !important;
     padding-bottom: 24px !important;
   }
-  .mobile-pane-hidden {
-    display: none !important;
+
+  .device-viewport-wrapper:not(.is-mobile-app) .mobile-pane-hidden {
+    display: flex !important;
   }
 }
 
+/* Mobile App Device Shell Preview Mode on Desktop */
 .is-force-mobile.mobile-bottom-nav-bar,
 .is-mobile-app .mobile-bottom-nav-bar {
+  position: absolute !important;
   display: flex !important;
+  border-bottom-left-radius: 32px;
+  border-bottom-right-radius: 32px;
 }
 
 .is-mobile-app .split-drag-divider {
@@ -1371,14 +1431,14 @@ body {
 .is-mobile-app .split-workspace-body {
   flex-direction: column !important;
   height: calc(100% - 58px - 64px) !important;
-  overflow: hidden;
+  overflow: hidden !important;
 }
 
 .is-mobile-app .split-chat-column,
 .is-mobile-app .split-preview-column {
   width: 100% !important;
   max-width: 100% !important;
-  flex: 1 !important;
+  flex: 1 1 100% !important;
 }
 
 .is-mobile-app .split-preview-column {
@@ -1387,20 +1447,6 @@ body {
 
 .is-mobile-app .mobile-pane-hidden {
   display: none !important;
-}
-
-/* LEFT SIDE: Chat Column (Fixed 50% Desktop) */
-.split-chat-column {
-  background: #f4f6fb;
-  border-right: 1.5px solid #e2e8f0;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow: hidden;
-  width: 50% !important;
-  max-width: 50% !important;
-  flex: 0 0 50% !important;
-  box-sizing: border-box;
 }
 
 .chat-column-header {
@@ -5482,6 +5528,145 @@ body {
     padding: 16px 14px !important;
     border-radius: 14px !important;
   }
+}
+
+/* ==========================================================================
+   TOUCH-FRIENDLY BUTTONS & ACCESSIBILITY (WCAG 2.1 - 44px minimum tap targets)
+   ========================================================================== */
+button,
+input[type="button"],
+input[type="submit"],
+.btn-m-bottom-tab,
+.btn-workspace-pill,
+.btn-exit-workspace,
+.btn-act-toggle,
+.btn-vote-season,
+.btn-airport-pill,
+.btn-transit-mode-card,
+.btn-quick-swap-chip,
+.macro-swap-select,
+.myra-stage-pill,
+.device-toggle-btn,
+.btn-spec-guide,
+.btn-search-flights,
+.btn-plan-trip-cta,
+.btn-m-segment {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:active,
+.btn-m-bottom-tab:active,
+.btn-workspace-pill:active,
+.btn-act-toggle:active,
+.btn-vote-season:active,
+.btn-airport-pill:active,
+.btn-transit-mode-card:active {
+  transform: scale(0.97);
+}
+
+button:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--mmt-blue) !important;
+  outline-offset: 2px !important;
+}
+
+/* Minimum 44px Touch Targets on Mobile */
+.btn-m-bottom-tab {
+  min-height: var(--touch-target-large, 48px);
+}
+
+.btn-workspace-pill,
+.device-toggle-btn,
+.btn-spec-guide,
+.btn-airport-pill,
+.btn-act-toggle,
+.btn-vote-season,
+.btn-exit-workspace {
+  min-height: var(--touch-target-min, 44px);
+  padding: 8px 14px;
+}
+
+/* Touch-Friendly Form Inputs */
+#split-chat-input,
+.persona-role-dropdown,
+.macro-swap-select,
+.member-transit-mode-select {
+  min-height: var(--touch-target-min, 44px);
+  font-size: 16px; /* Prevents auto-zoom on mobile safari */
+  touch-action: manipulation;
+}
+
+/* Primary Thumb-Accessible CTAs */
+.btn-search-flights,
+.btn-plan-trip-cta,
+#btn-download-itinerary-pdf,
+#btn-download-itinerary-pdf-locker,
+#btn-advance-to-cuisines-oneclick,
+#btn-admin-approve-grantex-pool,
+#btn-approve-macro-itin,
+#btn-admin-approve-dates {
+  min-height: var(--touch-target-large, 48px);
+  padding: 12px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   FLEXIBLE GRID SYSTEMS
+   Auto-fitting fluid grids adapting seamlessly from 320px to 4K displays
+   ========================================================================== */
+.flexible-auto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: 12px;
+}
+
+.multimodal-transit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)) !important;
+  gap: 10px !important;
+}
+
+.hotels-location-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)) !important;
+  gap: 12px !important;
+}
+
+.grantex-members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)) !important;
+  gap: 12px !important;
+}
+
+.cab-fleet-grid,
+.activity-passes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)) !important;
+  gap: 12px !important;
+}
+
+.feature-cards-grid,
+.destinations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)) !important;
+  gap: 16px !important;
+}
+
+/* Fluid Day Cards & Activities List */
+.preview-visual-day-card,
+.master-day-card,
+.boarding-pass-card,
+.hotel-voucher-card {
+  width: 100%;
+  min-width: 0; /* Prevents flex/grid overflow */
 }
 
 
