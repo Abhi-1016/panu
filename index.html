@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>MakeMyTrip — Group Travel with Myra 2.0 (Conversational Itinerary OS)</title>
+  <meta name="description" content="MakeMyTrip official group travel platform powered by Myra 2.0. Full-screen conversational itinerary builder and agentic booking operating system." />
+  <link rel="stylesheet" href="css/mmt-theme.css" />
+</head>
+<body>
+
+  <!-- Device Shell (Responsive Desktop Web or Native Mobile App Frame) -->
+  <div class="device-viewport-wrapper" id="device-wrapper">
+
+    <!-- 1. MakeMyTrip Authentic Dark Navy Header -->
+    <header class="mmt-global-header">
+      <div class="mmt-header-container">
+        <!-- Brand Logo -->
+        <div class="mmt-brand-logo" id="btn-brand-logo">
+          <div class="mmt-logo-text">
+            <span class="make">make</span><span class="my">my</span><span class="trip">trip</span>
+          </div>
+          <span class="mmt-myra-badge">MYRA 2.0</span>
+        </div>
+
+        <!-- Header Utilities -->
+        <div class="mmt-header-utilities">
+          <!-- 27-Stage Journey Spec & HITL Guide Modal Trigger -->
+          <button class="btn-spec-guide" id="btn-open-spec-modal" title="View official 27-Stage Journey Specification & Loopholes">
+            <span>📋</span> Journey Spec & HITL
+          </button>
+
+          <!-- Perspective / Persona Switcher -->
+          <div class="mmt-user-profile-pill" title="Switch viewpoint between Admin and Members">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80" id="header-persona-avatar" class="persona-avatar-img" alt="Avatar" />
+            <select class="persona-role-dropdown" id="header-persona-select" aria-label="Switch Persona">
+              <option value="user-1">Kabir (Admin)</option>
+              <option value="user-2">Priya (Member • Veg)</option>
+              <option value="user-3">Rohan (Member • Call)</option>
+              <option value="user-4">Tanya (Member)</option>
+            </select>
+          </div>
+
+          <!-- Desktop vs Mobile App Mode Switcher -->
+          <button class="device-toggle-btn" id="btn-device-toggle" title="Switch between MMT Desktop Website and MMT Mobile App">
+            <span id="device-mode-icon">📱</span>
+            <span id="device-mode-text">Mobile App View</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 2. MakeMyTrip Iconic Service Navigation Bar -->
+    <!-- Requirement 1: Only Group Trips is clickable and named 'Group Trips' -->
+    <nav class="mmt-services-bar">
+      <div class="mmt-services-container">
+        <div class="mmt-service-item">
+          <span class="service-icon">✈️</span>
+          <span class="service-label">Flights</span>
+        </div>
+        <div class="mmt-service-item">
+          <span class="service-icon">🏨</span>
+          <span class="service-label">Hotels</span>
+        </div>
+        <div class="mmt-service-item">
+          <span class="service-icon">🏡</span>
+          <span class="service-label">Homestays</span>
+        </div>
+        <div class="mmt-service-item">
+          <span class="service-icon">🌴</span>
+          <span class="service-label">Holiday Packages</span>
+        </div>
+        <div class="mmt-service-item">
+          <span class="service-icon">🚆</span>
+          <span class="service-label">Trains</span>
+        </div>
+        <div class="mmt-service-item">
+          <span class="service-icon">🚌</span>
+          <span class="service-label">Buses</span>
+        </div>
+        <div class="mmt-service-item">
+          <span class="service-icon">🚖</span>
+          <span class="service-label">Cabs</span>
+        </div>
+        <!-- ONLY CLICKABLE ITEM -->
+        <a class="mmt-service-item is-clickable active" id="nav-item-grouptrips" title="Plan Collaborative Group Travel with Myra">
+          <span class="service-icon">👥</span>
+          <span class="service-label">Group Trips</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Requirement 2: Top progress bar removed! Flow is intuitive inside search and Myra chat. -->
+
+    <!-- 3. Dynamic Main View Area (Search Widget & Home Content) -->
+    <main id="mmt-view-root">
+      <!-- Injected by JavaScript -->
+    </main>
+
+    <!-- 4. Full-Screen Myra Chat Workspace Mount Point (Requirement 7) -->
+    <div id="mmt-fullscreen-chat-root"></div>
+
+    <!-- 5. Spec & HITL Modal Mount Point -->
+    <div id="mmt-spec-modal-container"></div>
+
+  </div>
+
+  <!-- Application Entry Point -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
